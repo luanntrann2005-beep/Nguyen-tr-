@@ -3,3 +3,38 @@
 // @match        *://evowars.io/*
 // @grant        none
 // ==UserScript==
+
+// =================================================================
+// TÀI LIỆU PHÂN TÍCH VÀ CƠ CHẾ CHỐNG GIAN LẬN (ANTI-CHEAT ANALYSIS)
+// =================================================================
+
+(function() {
+    'useScript';
+    console.log("[Anti-Cheat Monitor] Đang kiểm tra tính toàn vẹn của Client...");
+
+    // 1. Giám sát tiêm giao diện lạ (Menu Overlay)
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1 && parseInt(window.getComputedStyle(node).zIndex) > 10000) {
+                    console.warn("[Cảnh báo Security] Phát hiện thẻ DOM lạ có z-index bất thường.");
+                }
+            });
+        });
+    });
+    
+    // Kích hoạt quan sát giao diện
+    if (document.body) {
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    // 2. Bảo vệ cổng kết nối WebSocket khỏi bị ghi đè
+    if (typeof WebSocket !== 'undefined' && WebSocket.prototype) {
+        try {
+            Object.freeze(WebSocket.prototype);
+            console.log("[Anti-Cheat Monitor] Đã đóng băng WebSocket.prototype an toàn.");
+        } catch (e) {
+            console.error("[Cảnh báo Security] Không thể đóng băng WebSocket:", e);
+        }
+    }
+})();
